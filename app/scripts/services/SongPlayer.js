@@ -8,6 +8,7 @@
          **/
          var currentAlbum = Fixtures.getAlbum();
 
+
          /**
          * @desc Buzz object audio file
          * @type {object}
@@ -24,14 +25,22 @@
          };
 
          /**
+         * @function stopSong
+         * @desc stops the current song, and sets song.playing to true
+         **/
+         var stopSong = function(){
+           currentBuzzObject.stop();
+           SongPlayer.currentSong.playing = null;
+         }
+
+         /**
          * @function setSong
          * @desc Stops currently playing song and loads new audio file as currentBuzzObject
          * @param {object} song
          **/
          var setSong = function(song) {
             if (currentBuzzObject) {
-              currentBuzzObject.stop();
-              SongPlayer.currentSong.playing = null;
+              stopSong();
             }
             currentBuzzObject = new buzz.sound(song.audioUrl, {
               formats: ['mp3'],
@@ -93,8 +102,24 @@
            currentSongIndex--;
 
            if(currentSongIndex < 0){
-             currentBuzzObject.stop();
-             SongPlayer.currentSong.playing = null;
+             stopSong();
+           } else {
+             var song = currentAlbum.songs[currentSongIndex];
+             setSong(song);
+             playSong(song);
+           }
+         }
+
+         /**
+         * @function next
+         * @desc goes foward one place in the song list
+         **/
+         SongPlayer.next = function(){
+           var currentSongIndex = getSongIndex(SongPlayer.currentSong);
+           currentSongIndex++;
+
+           if(currentSongIndex > 4){
+             stopSong();
            } else {
              var song = currentAlbum.songs[currentSongIndex];
              setSong(song);
